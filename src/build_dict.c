@@ -1,11 +1,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "hashing.h"
 
-#define MAX_WORDS 400000
 #define MAX_WORD_SIZE 28
+
+int get_treesize()
+{
+    int size = 0;
+    char buf[MAX_WORD_SIZE];
+
+    while(fgets(buf, MAX_WORD_SIZE, stdin)){
+        size++;
+    }
+
+    rewind(stdin);
+
+    return size;
+}
 
 
 int fill_tree(struct Hashelement *tree, const int treesize)
@@ -47,7 +59,7 @@ int fill_tree(struct Hashelement *tree, const int treesize)
         bookmark++;
     }
 
-    return bookmark-1;
+    return bookmark;
 }
 
 
@@ -73,15 +85,8 @@ void write_tree_to_file(const char *filename, struct Hashelement *tree, const in
 int main()
 {
     char *treefile = "database.bin";
-    int treesize = MAX_WORDS;
+    int treesize = get_treesize();
     struct Hashelement *tree = (struct Hashelement*) calloc(treesize, sizeof(struct Hashelement));
-
-	for(int i=0; i<treesize; i++)
-	{
-		tree[i].hash = 0;
-		tree[i].child1 = 0;
-		tree[i].child2 = 0;
-	}
 
     treesize = fill_tree(tree, treesize);
 

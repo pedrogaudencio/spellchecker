@@ -4,45 +4,20 @@
 
 #include "hashing.h"
 
+#define MAX_WORDS 400000
+#define MAX_WORD_SIZE 28
 
-int get_nwords(const char *filename)
+
+int fill_tree(struct Hashelement *tree, const int treesize)
 {
-    FILE *fp = fopen(filename,"r");
-    if(fp == NULL) {
-        printf("*** error: could not open file %s. exit.\n", filename);
-        return -1;
-    }
-
-    int count = 0;
-    char buf[28];
-
-    while(!feof(fp)) {
-        fscanf(fp,"%s",buf);
-        count++;
-    }
-
-    fclose(fp);
-
-    return count-1;
-}
-
-
-void fill_tree(const char *filename, struct Hashelement *tree, const int treesize)
-{
-    FILE *fp = fopen(filename,"r");
-    if(fp == NULL) {
-        printf("*** error: could not open file %s. exit.\n",filename);
-        return;
-    }
-
-    char buf[28];
+    char buf[MAX_WORD_SIZE];
     int bookmark = 0, pos = 0;
     unsigned long int hashvalue;
 
-    for(int i=0; i<treesize; i++)
-    {
-        fscanf(fp,"%s",buf);
-        hashvalue = djb2((unsigned char*)buf);
+    while(fgets(buf, MAX_WORD_SIZE, stdin)){
+        buf[strlen(buf)-1] = '\0';
+        hashvalue = djb2((unsigned char*) buf);
+        //printf("%d %s\n", bookmark, buf);
 
         pos = 0;
         while(tree[pos].hash != 0)
@@ -65,28 +40,29 @@ void fill_tree(const char *filename, struct Hashelement *tree, const int treesiz
             }
             else {
                 printf("*** error while filling tree: collision between words. exit.\n");
-                return;
+                return -1;
             }
         }
         tree[bookmark].hash = hashvalue;
         bookmark++;
     }
-    fclose(fp);
+
+    return bookmark-1;
 }
 
 
 void write_tree_to_file(const char *filename, struct Hashelement *tree, const int treesize)
 {
-    FILE *fp = fopen(filename,"wb");
+    FILE *fp = fopen(filename, "wb");
 
-    fwrite(&(treesize),sizeof(int),1,fp);
+    fwrite(&(treesize), sizeof(int), 1, fp);
 
     int i;
     for(i=0; i<treesize; i++)
     {
-        fwrite(&(tree[i].hash),sizeof(unsigned long int),1,fp);
-        fwrite(&(tree[i].child1),sizeof(int),1,fp);
-        fwrite(&(tree[i].child2),sizeof(int),1,fp);
+        fwrite(&(tree[i].hash), sizeof(unsigned long int), 1, fp);
+        fwrite(&(tree[i].child1), sizeof(int), 1, fp);
+        fwrite(&(tree[i].child2), sizeof(int), 1, fp);
     }
     fclose(fp);
 
@@ -96,9 +72,8 @@ void write_tree_to_file(const char *filename, struct Hashelement *tree, const in
 
 int main()
 {
-    char *filename = "../assets/pt-ao.txt";
     char *treefile = "database.bin";
-    int treesize = get_nwords(filename);
+    int treesize = MAX_WORDS;
     struct Hashelement *tree = (struct Hashelement*) calloc(treesize, sizeof(struct Hashelement));
 
 	for(int i=0; i<treesize; i++)
@@ -108,9 +83,11 @@ int main()
 		tree[i].child2 = 0;
 	}
 
-    fill_tree(filename, tree, treesize);
+    treesize = fill_tree(tree, treesize);
 
     write_tree_to_file(treefile, tree, treesize);
+
+    free(tree);
 
     return 0;
 }

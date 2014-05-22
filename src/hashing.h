@@ -1,3 +1,5 @@
+#ifndef HASH_H
+#define HASH_H
 
 struct Hashelement {
     unsigned long int hash;
@@ -5,14 +7,6 @@ struct Hashelement {
     int child2;
 };
 
+unsigned long int djb2 (unsigned char *str);
 
-unsigned long int djb2 (unsigned char *str)
-{
-    unsigned long hash = 5381;
-    int c;
-
-    while (c = *str++)
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-    return hash;
-}
+#endif

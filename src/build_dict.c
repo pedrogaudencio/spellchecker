@@ -50,10 +50,10 @@ int fill_tree(struct Hashelement *tree, const int treesize)
                 else
                     pos = tree[pos].child2;
             }
-            else {
+            /*else {
                 printf("*** error while filling tree: collision between words. exit.\n");
                 return -1;
-            }
+            }*/
         }
         tree[bookmark].hash = hashvalue;
         bookmark++;

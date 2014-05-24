@@ -1,11 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
+#include <stdint.h>
 #include "hashing.h"
 
 
-int check_for_typo(struct Hashelement *tree, const int treesize, unsigned long int thehash)
+int check_for_typo(struct Hashelement *tree, const int treesize, uint64_t thehash)
 {
     int istypo = 1, pos = 0;
 
@@ -46,7 +46,7 @@ void read_tree_from_file(const char *filename, struct Hashelement **tree, int *t
 
     int i;
     for(i=0; i<*treesize; i++) {
-        fread(&((*tree)[i].hash), sizeof(unsigned long int), 1, fp);
+        fread(&((*tree)[i].hash), sizeof(uint64_t), 1, fp);
         fread(&((*tree)[i].child1), sizeof(int), 1, fp);
         fread(&((*tree)[i].child2), sizeof(int), 1, fp);
     }

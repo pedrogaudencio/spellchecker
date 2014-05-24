@@ -1,11 +1,13 @@
+#include <stdint.h>
+
 /*
 * DJB2 is a fast hash function which also provides
 * good uniqueness.
 * See http://www.cse.yorku.ca/~oz/hash.html
 */
-unsigned long int djb2 (unsigned char *str)
+uint64_t djb2 (unsigned char *str)
 {
-    unsigned long hash = 5381;
+    uint64_t hash = 5381;
     int c;
 
     while ((c = *str++))

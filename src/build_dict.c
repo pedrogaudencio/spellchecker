@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include "hashing.h"
 
 #define MAX_WORD_SIZE 28
@@ -24,7 +25,7 @@ int fill_tree(struct Hashelement *tree, const int treesize)
 {
     char buf[MAX_WORD_SIZE];
     int bookmark = 0, pos = 0;
-    unsigned long int hashvalue;
+    uint64_t hashvalue;
 
     while(fgets(buf, MAX_WORD_SIZE, stdin)){
         buf[strlen(buf)-1] = '\0';
@@ -72,7 +73,7 @@ void write_tree_to_file(const char *filename, struct Hashelement *tree, const in
     int i;
     for(i=0; i<treesize; i++)
     {
-        fwrite(&(tree[i].hash), sizeof(unsigned long int), 1, fp);
+        fwrite(&(tree[i].hash), sizeof(uint64_t), 1, fp);
         fwrite(&(tree[i].child1), sizeof(int), 1, fp);
         fwrite(&(tree[i].child2), sizeof(int), 1, fp);
     }

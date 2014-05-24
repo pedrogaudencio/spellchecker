@@ -2,11 +2,11 @@
 #define HASH_H
 
 struct Hashelement {
-    unsigned long int hash;
+    uint64_t hash;
     int child1;
     int child2;
 };
 
-unsigned long int djb2 (unsigned char *str);
+uint64_t djb2 (unsigned char *str);
 
 #endif

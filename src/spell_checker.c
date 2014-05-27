@@ -15,17 +15,21 @@ int get_indices2 (FILE *fp, int *indices)
     while(!feof(fp))
     {
         fscanf(fp,"%s",buf);
-		indices[(int)buf[0] - ((int)buf[0] > 96 ? 97 : 65) + 1] += 1;   //small or capital letter
+        // small or capital letter
+		indices[(int)buf[0] - ((int)buf[0] > 96 ? 97 : 65) + 1] += 1;
         count++;
     }
 
-	indices[26] -= 1;	//last word in dictionnary is read twice for some reasons...;
+    // last word in dictionnary is read twice for some reason...
+	indices[26] -= 1;
 
 	int ii;
 	for(ii=2; ii<27; ii++)
 	{
-		indices[ii] += indices[ii-1];	//get the starting index for every letter by adding the words for every previous letter to the current one;
-	}                                   //first entry: 0, last entry: number of words;
+		// get the starting index for every letter by adding the words for every previous letter to the current one
+		// first entry: 0, last entry: number of words
+		indices[ii] += indices[ii-1];
+	}
 
     return count-1;
 }
@@ -33,7 +37,8 @@ int get_indices2 (FILE *fp, int *indices)
 void fill_array (FILE *fp, int *indices, char *words, const int nwords)
 {
     char buf[MAX_WORD_LENGTH];
-	int *positions = (int*)calloc(26,sizeof(int)), flag = 0;    //saves the current writing position for every letter;
+    // saves the current writing position for every letter
+	int *positions = (int*)calloc(26,sizeof(int)), flag = 0;
 
 	int ii;
     for(ii=0; ii<nwords; ii++)
@@ -53,7 +58,8 @@ int check_for_typo (char *words, int *indices, char *typo)
 
 	int ii;
 
-	if((int)typo[0] < 65 || (int)typo[0] > 122 || ((int)typo[0] > 90 && (int)typo[0] < 97)) //first char not a letter;
+	// first char not a letter
+	if((int)typo[0] < 65 || (int)typo[0] > 122 || ((int)typo[0] > 90 && (int)typo[0] < 97))
     {
         return 1;
     }
@@ -122,7 +128,8 @@ int main (int argc, char **argv)
 
     char *filename = "pt-ao.txt";
 	//double time = MPI_Wtime();
-	int *indices = (int*)calloc(27,sizeof(int));	//saves the starting index for every letter + the number of words in the last entry;
+	// saves the starting index for every letter + the number of words in the last entry
+	int *indices = (int*)calloc(27,sizeof(int));
 
     FILE *fp = fopen(filename,"r");
     if(fp == NULL) {

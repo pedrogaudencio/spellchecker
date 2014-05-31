@@ -1,0 +1,4 @@
+Por exemplo se o dicionario so contiver as palavras sim e Maria nenhuma das
+palavras sim SIM Sim sIm siM e sIM constitui um erro A palavra Maria tambem nao
+constitui um erro mas qualquer outra forma dessa palavra como maria MARIA e
+MaRiA constitui um erro Estas tres formas da palavra constituem erros distintos

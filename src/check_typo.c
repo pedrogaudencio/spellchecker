@@ -1,74 +1,80 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdint.h>
 #include "hashing.h"
+#include "typos.h"
 
+HT dictionary;
+HTYPO typotable;
+int k = 5;
+int linha = 0;
 
-int check_for_typo(struct Hashelement *tree, const int treesize, uint64_t thehash)
+/*void is_typo()
 {
-    int istypo = 1, pos = 0;
 
-    while(1) {
-        if(tree[pos].hash == thehash) {
-            istypo = 0;
-            break;
-        }
-        else if(thehash < tree[pos].hash) {
-            if(tree[pos].child1 == 0)
-                break;
-            else
-                pos = tree[pos].child1;
-        }
-        else if(thehash > tree[pos].hash) {
-            if(tree[pos].child2 == 0)
-                break;
-            else
-                pos = tree[pos].child2;
-        }
-    }
+}*/
 
-    return istypo;
+void read()
+{
+	char buf[MAX_WORD_LENGTH];
+	while(fgets(buf, MAX_WORD_LENGTH, stdin)){
+		char* word;
+		word = strtok(buf, " ");
+		while(word != NULL) {
+			if(word[strlen(word)-1] == '\n'){
+				word[strlen(word)-1] = '\0';
+				linha ++;
+				if(!(word[0] == '\0'))
+					//printf("--linha vazia--\n");
+				//else
+					//handle_word(dictionary, typotable, word, linha);
+					printf("<%s>\t| linha %d\n", word, linha);
+		}
+		else
+			//handle_word(dictionary, typotable, word, linha);
+			printf("<%s>", word);
+		word = strtok(NULL, " ");
+		}
+	}
 }
 
-
-void read_tree_from_file(const char *filename, struct Hashelement **tree, int *treesize)
+// loads database stored in disk
+void load(char *filename)
 {
-    FILE *fp = fopen(filename,"rb");
-    if(fp == NULL) {
-        printf("*** error: could not open file %s. exit.\n", filename);
-        return;
-    }
+	new(dictionary);
+	FILE *fp = fopen(filename, "rb");
+	if(fp == NULL) {
+		printf("*** error: could not open file %s. exit.\n", filename);
+		exit(1);
+	}
 
-    fread(treesize,sizeof(int),1,fp);
+	for (int i = 0; i < HASH_LENGTH; ++i)
+		fread(&dictionary[i].element, sizeof(char)*MAX_WORD_LENGTH, 1, fp);
 
-    *tree = (struct Hashelement*) calloc(*treesize, sizeof(struct Hashelement));
-
-    int i;
-    for(i=0; i<*treesize; i++) {
-        fread(&((*tree)[i].hash), sizeof(uint64_t), 1, fp);
-        fread(&((*tree)[i].child1), sizeof(int), 1, fp);
-        fread(&((*tree)[i].child2), sizeof(int), 1, fp);
-    }
+	fclose(fp);
 }
 
-int main (void)
+int main(int argc, char **argv)
 {
-    char *treefile = "database.bin";
-    int treesize;
-    struct Hashelement *tree;
+	load("database.bin");
+	new_typotable(typotable);
 
-    read_tree_from_file(treefile, &tree, &treesize);
+	// checks if k is given as a parameter
+	/*if(argc == 2){
+		k = atoi(argv[1]);
+		if(k > MAX_TYPOS)
+			k = 100000;
+	}*/
 
-    printf("%s is typo? %d\n","zurzidora",check_for_typo(tree,treesize,djb2((unsigned char*)"zurzidora")));
-    printf("%s is typo? %d\n","zurzidor",check_for_typo(tree,treesize,djb2((unsigned char*)"zurzidor")));
-    printf("%s is typo? %d\n","urzidora",check_for_typo(tree,treesize,djb2((unsigned char*)"urzidora")));
-    printf("%s is typo? %d\n","urzidor",check_for_typo(tree,treesize,djb2((unsigned char*)"urzidor")));
-    printf("%s is typo? %d\n","consonavam",check_for_typo(tree,treesize,djb2((unsigned char*)"consonavam")));
-    printf("%s is typo? %d\n","ASDFGHJ",check_for_typo(tree,treesize,djb2((unsigned char*)"ASDFGHJ")));
-    printf("%s is typo? %d\n","urzido",check_for_typo(tree,treesize,djb2((unsigned char*)"urzido")));
-    printf("%s is typo? %d\n","DFGHJ",check_for_typo(tree,treesize,djb2((unsigned char*)"DFGHJ")));
-    printf("%s is typo? %d\n","DFG",check_for_typo(tree,treesize,djb2((unsigned char*)"DFG")));
+	read();
 
-    return 0;
+	handle_word(dictionary, typotable, "cOnA", linha);
+	int index = djb2("cOnA") % HASH_LENGTH;
+	printf("typo: %s\ncount: %s\nlines:", typotable[index].element, typotable[index].count);
+	list_print(typotable[index].lines);
+	handle_word(dictionary, typotable, "cOnA", linha);
+
+	//check(dictionary);
+
+	return 0;
 }

@@ -1,0 +1,3 @@
+adopcao (1) 5
+correccao (1) 13
+incorrectas (1) 10

@@ -54,7 +54,7 @@ int exists(HT table, char word[])
 
 	// if the position has '\0', the word doesn't exist
 	if(table[index].element[0] == '\0'){
-		printf("empty position\n");
+		//printf("empty position\n");
 		return 0;
 	}
 

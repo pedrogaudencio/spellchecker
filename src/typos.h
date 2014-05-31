@@ -15,6 +15,7 @@ typedef struct typoindex {
 typedef TypoIndex HTYPO[HASH_LENGTH];
 
 void new_typotable(HTYPO table);
+int get_typos_found();
 int exists_typo(HTYPO table, char typo[]);
 void add_typo(HTYPO table, char typo[], char line[]);
 void handle_word(HT table, HTYPO typo_table, char word[], int line);

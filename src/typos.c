@@ -6,6 +6,8 @@
 #include "typos.h"
 #include "linkedlist.h"
 
+int typos_found = 0;
+
 // creates new hashtable and fills it with '\0'
 void new_typotable(HTYPO table)
 {
@@ -14,6 +16,11 @@ void new_typotable(HTYPO table)
 		table[i].count[0] = '\0';
     	table[i].lines = list_new();
 	}
+}
+
+int get_typos_found()
+{
+	return typos_found;
 }
 
 // returns 1 if exists and 0 if not
@@ -88,6 +95,7 @@ void handle_word(HT table, HTYPO typo_table, char word[], int line)
 {
 	//printf("normal: %s\n", word);
 	if(!exists(table, word)){
+		//if(word[0] > )
 		char* lword = to_lowercase(word);
 		//char lword[strlen(word)];
 		//strcpy(lword, to_lowercase(word));
@@ -96,6 +104,8 @@ void handle_word(HT table, HTYPO typo_table, char word[], int line)
 			char l[7];
 			sprintf(l, "%d", line);
 			add_typo(typo_table, word, l);
+			typos_found++;
 		}
-	}
+	} else 
+		printf("all is fine.\n");
 }

@@ -6,21 +6,18 @@
 
 HT dictionary;
 HTYPO typotable;
-int k = 5;
-int linha = 0;
+int k = 5, linha = 0;
 
-/*void is_typo()
-{
-
-}*/
 
 void read()
 {
 	char buf[MAX_WORD_LENGTH];
+	int typos_found = 0;
 	while(fgets(buf, MAX_WORD_LENGTH, stdin)){
 		char* word;
 		word = strtok(buf, " ");
-		while(word != NULL) {
+		while(word != NULL && typos_found <= k) {
+			typos_found = get_typos_found();
 			if(word[strlen(word)-1] == '\n'){
 				word[strlen(word)-1] = '\0';
 				linha ++;
@@ -60,19 +57,25 @@ int main(int argc, char **argv)
 	new_typotable(typotable);
 
 	// checks if k is given as a parameter
-	/*if(argc == 2){
+	if(argc == 2){
 		k = atoi(argv[1]);
 		if(k > MAX_TYPOS)
 			k = 100000;
-	}*/
+	}
 
 	read();
+
+	char cona[] = "Cona";
+
+	//printf("%d\n", atoi(cona[0]));
 
 	handle_word(dictionary, typotable, "cOnA", linha);
 	int index = djb2("cOnA") % HASH_LENGTH;
 	printf("typo: %s\ncount: %s\nlines:", typotable[index].element, typotable[index].count);
 	list_print(typotable[index].lines);
-	handle_word(dictionary, typotable, "cOnA", linha);
+	handle_word(dictionary, typotable, "sIm", linha);
+	printf("\ntypos found: %d\n", get_typos_found());
+	//handle_word(dictionary, typotable, "cOnA", linha);
 
 	//check(dictionary);
 

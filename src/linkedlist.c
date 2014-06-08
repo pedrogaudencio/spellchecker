@@ -10,7 +10,7 @@ struct list* list_new()
 {
 	struct list* newlist=malloc(sizeof(struct list));
 	newlist->head=NULL;
-	newlist->tail=newlist->head;
+	newlist->tail=NULL;
 	newlist->size=0;
 	return newlist;
 }
@@ -28,28 +28,27 @@ int list_empty(struct list* list)
 }
 
 
-struct list_node * list_insert_node(struct list_node* tail, char n[])
+void list_insert_node(struct list* list, int n)
 {
 	struct list_node* new_node = malloc(sizeof(struct list_node));
-	strcpy(new_node->number, n);
-	tail->next=new_node;
-	tail=new_node;
-	//new_node->next=head->next;
-	//head->next=new_node;
-	return tail;
+	new_node->number = n;
+	new_node->next = NULL;
+	list->tail->next=new_node;
+	list->tail=new_node;
 }
 
 
-struct list_node * list_insert(struct list *list, char n[])
+void list_insert(struct list *list, int n)
 {
 	list->size++;
 	if(list_empty(list)){
 		list->head=malloc(sizeof(struct list_node));
-		strcpy(list->head->number, n);
-		return list->head;
+		list->head->number = n;
+		list->tail=list->head;
+		list->tail->next = NULL;
 	}
 	else
-		return list_insert_node(list->tail, n);
+		list_insert_node(list, n);
 }
 
 
@@ -57,7 +56,7 @@ void list_print(struct list *list)
 {
 	struct list_node* current=list->head;
 	while(current!=NULL){
-		printf("%s ", current->number);
+		printf("%d ", current->number);
 		current=next(current);
 	}
 }

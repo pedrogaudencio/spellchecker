@@ -11,9 +11,9 @@ int typos_found = 0;
 // creates new hashtable and fills it with '\0'
 void new_typotable(HTYPO table)
 {
-	for (int i = 0; i < HASH_LENGTH; i++){
+	for (int i = 0; i < TYPOHASH_LENGTH; i++){
 		table[i].element[0] = '\0';
-		table[i].count[0] = '\0';
+		table[i].count = 0;
     	table[i].lines = list_new();
 	}
 }
@@ -26,7 +26,7 @@ int get_typos_found()
 // returns 1 if exists and 0 if not
 int exists_typo(HTYPO table, char typo[])
 {
-	int index = djb2(typo) % HASH_LENGTH;
+	int index = djb2(typo) % TYPOHASH_LENGTH;
 
 	// abs(index)
 	if(index < 0)
@@ -41,7 +41,7 @@ int exists_typo(HTYPO table, char typo[])
 	while(strcmp(table[index].element, typo) != 0){
 		//printf("%d %s\n", index, table[index].element);
 		index++;
-		if(index == HASH_LENGTH)
+		if(index == TYPOHASH_LENGTH)
 			return 0;
 	}
 
@@ -53,59 +53,63 @@ int exists_typo(HTYPO table, char typo[])
 }
 
 // hashes the word and puts it in table[hash]
-void add_typo(HTYPO table, char* typo, char line[])
+void add_typo(HTYPO table, char* typo, int line)
 {
-	int index = djb2(typo) % HASH_LENGTH;
+	int index = djb2(typo) % TYPOHASH_LENGTH;
 
 	if(index < 0)
     	index *= -1;
 
     // se existir, modifica
     if(exists_typo(table, typo)){
-    	int c = atoi(table[index].count);
-    	c++;
-		sprintf(table[index].count, "%d\n", c);
+    	table[index].count++;
+
 		if(list_length(table[index].lines) < 50){
 			list_insert(table[index].lines, line);
 		}
     } // se nao existir, adiciona desta maneira
     else {
-	    while(table[index].element[0] != '\0')
+	    while(table[index].element[0] != '\0'){
 	    	index++;
 
+		    if(index == TYPOHASH_LENGTH)
+		    	index = 0;
+		}
+
 		strcpy(table[index].element, typo);
-		sprintf(table[index].count, "%d\n", 1);
+		table[index].count++;
 		list_insert(table[index].lines, line);
     }
 }
 
-char* to_lowercase(char* word)
+// TODO: mudar isto para devolver nova palavra em vez de alterar a recebida
+void to_lowercase(char* word)
 {
-	char c;
-	char w[strlen(word)];
-	for(int i = 0; word[i]; i++){
-		c = word[i];
-		w[i] = tolower(c);
+	for(int i = 0; i < strlen(word); i++){
+		//printf("%c\n", word[i]);
+		word[i] = tolower(word[i]);
 	}
-	word = w;
-	return word;
 }
 
-void handle_word(HT table, HTYPO typo_table, char word[], int line)
+/*void to_lowercase(char* word, char* w)
+{
+	for(int i = 0; i < strlen(word); i++)
+		w[i] = tolower(word[i]);
+
+	w[strlen(word)] = '\0';
+}*/
+
+// 
+void handle_word(HT table, HTYPO typo_table, char* word, int line)
 {
 	//printf("normal: %s\n", word);
 	if(!exists(table, word)){
-		//if(word[0] > )
-		char* lword = to_lowercase(word);
-		//char lword[strlen(word)];
-		//strcpy(lword, to_lowercase(word));
-		//printf("lower: %s\n", lword);
-		if(!exists(table, lword)){
-			char l[7];
-			sprintf(l, "%d", line);
-			add_typo(typo_table, word, l);
+		//char* lword = to_lowercase(word);
+		to_lowercase(word);
+		//printf("lower: %s\n", word);
+		if(!exists(table, word)){
+			add_typo(typo_table, word, line);
 			typos_found++;
 		}
-	} else 
-		printf("all is fine.\n");
+	}
 }

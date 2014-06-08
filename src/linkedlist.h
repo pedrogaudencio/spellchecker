@@ -1,13 +1,11 @@
-#ifndef MAX_TEXT_LINES
-#define MAX_TEXT_LINES 7 // 500000\0
-
-
-
 /* linkedlist interface */
+
+#ifndef LINKEDLIST
+#define LINKEDLIST
 
 struct list_node{
 	struct list_node* next;
-	char number[MAX_TEXT_LINES];
+	int number;
 };
 
 struct list{
@@ -24,8 +22,8 @@ int list_empty(struct list* list);
 
 void list_destroy(struct list* list);
 
-struct list_node * list_insert_node(struct list_node* tail, char n[]);
-struct list_node * list_insert(struct list *list, char n[]);
+void list_insert_node(struct list* list, int n);
+void list_insert(struct list *list, int n);
 
 void list_print(struct list *list);
 

@@ -22,14 +22,21 @@ int djb2 (char *str)
     return hash;
 }
 
-// creates new hashtable and fills it with '\0'
+/* Cria uma nova tabela de hash e preenche os elementos de todas
+ * as posições com uma palavra vazia.
+ * @param table tabela de hash a ser preenchida
+ */
 void new(HT table)
 {
-	for (int i = 0; i < HASH_LENGTH; i++)
+	for(int i = 0; i < HASH_LENGTH; i++)
 		table[i].element[0] = '\0';
 }
 
-// hashes the word and puts it in table[hash]
+/* Faz hash à palavra e guarda-o na tabela de hash, incrementa
+ * 1 na sua contagem e adiciona a linha correspondente.
+ * param table tabela de hash das palavras
+ * param word palavra a ser adicionado
+ */
 void add(HT table, char word[])
 {
 	int index = djb2(word) % HASH_LENGTH;
@@ -43,7 +50,11 @@ void add(HT table, char word[])
 	strcpy(table[index].element, word);
 }
 
-// returns 1 if exists and 0 if not
+/* Verifica se uma palavra existe na tabela
+ * param table tabela de hash das palavras
+ * param word palavra a ser verificada
+ * @return 1 se o erro já existe, 0 se não existe
+ */
 int exists(HT table, char word[])
 {
 	int index = djb2(word) % HASH_LENGTH;
@@ -59,39 +70,15 @@ int exists(HT table, char word[])
 	}
 
 	// checks every index until the end of the table
-	while(strcmp(table[index].element, word) != 0){
-		//printf("%d %s\n", index, table[index].element);
+	while(strcmp(table[index].element, "") != 0 && strcmp(table[index].element, word) != 0){
 		index++;
 		if(index == HASH_LENGTH)
-			return 0;
+			index = 0;
 	}
 
 	// if table[index].element == word, the word exists
-	if (!strcmp(table[index].element, word))
+	if(!strcmp(table[index].element, word))
 		return 1;
 
-	else return 0;
-}
-
-// checks if every word was stored correctly
-void check(HT table)
-{
-	printf("checking... ");
-	char buf[MAX_WORD_LENGTH];
-	FILE *fp = fopen("pt-ao.txt","r");
-	if(fp == NULL) {
-        printf("*** error: could not open file. exit.\n");
-        exit(1);
-    }
-
-	while(fgets(buf, MAX_WORD_LENGTH, fp) != NULL)
-	{
-		strtok(buf, "\n");
-		if(exists(table, buf))
-			c++;
-	}
-
-	printf("%d words.\n", c-1);
-
-	fclose(fp);
+	return 0;
 }

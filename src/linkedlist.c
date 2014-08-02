@@ -56,7 +56,10 @@ void list_print(struct list *list)
 {
 	struct list_node* current=list->head;
 	while(current!=NULL){
-		printf("%d ", current->number);
+		if(current->next!=NULL)
+			printf("%d ", current->number);
+		else
+			printf("%d", current->number);
 		current=next(current);
 	}
 }
